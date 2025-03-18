@@ -17,6 +17,7 @@ def make_palindrome(text):
     # TODO: Utwórz palindrom dodając odwrócone znaki na końcu
     # (bez ostatniego znaku, który już jest na początku odwróconego tekstu)
     # option1 = text + (text[:-1])[::-1]
+    #erwewe -> erwewere
     option1 = text
     i = 0
     while not is_palindrome(option1):
@@ -27,11 +28,13 @@ def make_palindrome(text):
     # TODO: Utwórz palindrom dodając odwrócone znaki na początku
     # (bez pierwszego znaku, który już jest na końcu oryginalnego tekstu)
     # option2 = (text[1:])[::-1] + text
+    # erwewe -> ewewrerwewe
+
     option2 = text
     i = 0
     while not is_palindrome(option2):
         n = len(option2) - i
-        option1 = option1[:i] + option1[n-1] + option1[i:]
+        option2 = option2[:i] + option2[n - 1] + option2[i:]
         i += 1
  
     # TODO: Zwróć krótszą opcję jako wynik

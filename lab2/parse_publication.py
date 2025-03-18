@@ -25,10 +25,11 @@ def parse_publication(reference: str) -> Optional[dict]:
     # 3. Volume, issue, and pages pattern
     authors_year_pattern = r"^(.*?)\s*\((\d{4})\)\."
     title_journal_pattern = r"\s*(.*?)\.\s*(.*?),"
-    volume_issue_pages_pattern = r"\s*(\d+)(\(\d+\)),\s*(\d+)-(\d+)\.$"
+    volume_issue_pages_pattern = r"\s*(\d+)(?:\((\d+)\))?,\s*(\d+)-(\d+)\.$"
 
     # TODO: Combine the patterns
-    full_pattern = r"^(.*?)\s*\((\d{4})\)\.\s*(.*?)\.\s*(.*?),\s*(\d+)\((\d+)\),\s*(\d+)-(\d+)\.$"
+    # full_pattern = authors_year_pattern + title_journal_pattern + volume_issue_pages_pattern
+    full_pattern = authors_year_pattern + title_journal_pattern + volume_issue_pages_pattern
 
     # TODO: Use re.match to try to match the full pattern against the reference
     # If there's no match, return None
@@ -37,7 +38,6 @@ def parse_publication(reference: str) -> Optional[dict]:
 
     # TODO: Extract information using regex
     # Each author should be parsed into a dictionary with 'last_name' and 'initial' keys
-
 
     # TODO: Create a pattern to match individual authors
     author_pattern = r"^\s*([^.]+?),\s*([A-Z])\.?$"

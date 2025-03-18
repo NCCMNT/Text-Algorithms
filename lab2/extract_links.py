@@ -20,7 +20,8 @@ def extract_links(html: str) -> list[dict[str, str]]:
     # 1. The URL (href attribute value)
     # 2. The title attribute (which might not exist)
     # 3. The link text (content between <a> and </a> tags)
-    pattern = r""
+
+    pattern = r"<a\s*href=\"(.*?)\"\s*(?:title=\"(.*?)\")>(.*?)</a>"
 
     links = []
 
@@ -28,4 +29,15 @@ def extract_links(html: str) -> list[dict[str, str]]:
     # For each match, extract the necessary information and create a dictionary
     # Then append that dictionary to the 'links' list
 
+    matches = re.finditer(pattern, html)
+    for match in matches:
+        links.append({
+            'url' : match.group(1),
+            'title' : match.group(2),
+            'text' : match.group(3)
+        })
+
     return links
+
+h = '<div><a href="https://www.agh.edu.pl">AGH</a> <a href="https://www.agh.edu.pl/wydzialy" title="Wydziały">Wydziały AGH</a></div>'
+extract_links(h)

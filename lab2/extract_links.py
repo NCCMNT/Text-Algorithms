@@ -21,7 +21,7 @@ def extract_links(html: str) -> list[dict[str, str]]:
     # 2. The title attribute (which might not exist)
     # 3. The link text (content between <a> and </a> tags)
 
-    pattern = r"<a\s*href=\"(.*?)\"\s*(?:title=\"(.*?)\")>(.*?)</a>"
+    pattern = r"<a\s*href=\"([^\"]+)\"(?:\s+title=\"([^\"]*)\")?>(.*?)</a>"
 
     links = []
 

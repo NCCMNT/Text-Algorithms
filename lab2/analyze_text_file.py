@@ -60,20 +60,20 @@ def analyze_text_file(filename: str) -> dict:
 
     # TODO: Implement word extraction using regex
     # Find all words in the content (lowercase for consistency)
-    words = ...
+    words = re.findall(r"\b[^\W\d_]+\b", content.lower())
     word_count = len(words)
 
     # TODO: Implement sentence splitting using regex
     # A sentence typically ends with ., !, or ? followed by a space
     # Be careful about abbreviations (e.g., "Dr.", "U.S.A.")
-    sentence_pattern = r""
-    sentences = []
+    sentence_pattern = r"[A-Z](?:.*?)(?<!Prof)\s*(?<!\.)[.!?](?=\s+[A-Z]|\s*$)"
+    sentences = re.findall(sentence_pattern, content)
     sentence_count = len([s for s in sentences if s.strip()])
 
     # TODO: Implement email extraction using regex
     # Extract all valid email addresses from the content
-    email_pattern = r""
-    emails = []
+    email_pattern = r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b"
+    emails = re.findall(email_pattern, content)
 
     # TODO: Calculate word frequencies
     # Count occurrences of each word, excluding stop words and short words
@@ -100,3 +100,5 @@ def analyze_text_file(filename: str) -> dict:
         "dates": dates,
         "paragraph_sizes": paragraph_sizes,
     }
+
+analyze_text_file("/home/krzysztof/PROJECTS/Text-Algorithms/lab2/tests/test_file.md")

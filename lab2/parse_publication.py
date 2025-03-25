@@ -67,6 +67,3 @@ def parse_publication(reference: str) -> Optional[dict]:
     }
 
     return result
-
-s = "Kowalski, J., Nowak, A. (2023). Analiza algorytmów tekstowych. Journal of Computer Science, 45(2), 123-145."
-parse_publication(s)

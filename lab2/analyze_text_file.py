@@ -108,5 +108,3 @@ def analyze_text_file(filename: str) -> dict:
         "dates": dates,
         "paragraph_sizes": paragraph_sizes,
     }
-
-analyze_text_file("/home/krzysztof/PROJECTS/Text-Algorithms/lab2/tests/test_file.md")

@@ -38,6 +38,3 @@ def extract_links(html: str) -> list[dict[str, str]]:
         })
 
     return links
-
-h = '<div><a href="https://www.agh.edu.pl">AGH</a> <a href="https://www.agh.edu.pl/wydzialy" title="Wydziały">Wydziały AGH</a></div>'
-extract_links(h)

@@ -27,7 +27,8 @@ def rabin_karp_pattern_match(text: str, pattern: str, prime: int = 101) -> list[
         return h % prime
     
     def rolling_hash(old_hash, oldc, newc, pattern_len):
-        return (old_hash - ord(oldc) * (BASE ** (pattern_len - 1))) * BASE + ord(newc)
+        h = old_hash - ord(oldc) * (BASE ** pattern_len) + ord(newc) * (BASE ** pattern_len)
+        return h % prime
 
     if text == "" or pattern == "": return []
 

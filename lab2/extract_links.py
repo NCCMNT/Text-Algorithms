@@ -21,7 +21,7 @@ def extract_links(html: str) -> list[dict[str, str]]:
     # 2. The title attribute (which might not exist)
     # 3. The link text (content between <a> and </a> tags)
 
-    pattern = r"<a\s*href=\"(.*?)\"\s*(?:title=\"(.*?)\")>(.*?)</a>"
+    pattern = r"<a\s*href=\"([^\"]+)\"(?:\s+title=\"([^\"]*)\")?>(.*?)</a>"
 
     links = []
 
@@ -38,6 +38,3 @@ def extract_links(html: str) -> list[dict[str, str]]:
         })
 
     return links
-
-h = '<div><a href="https://www.agh.edu.pl">AGH</a> <a href="https://www.agh.edu.pl/wydzialy" title="Wydziały">Wydziały AGH</a></div>'
-extract_links(h)

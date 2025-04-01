@@ -227,16 +227,6 @@ def simplify(regex):
 
 
 def build_dfa(regex: RegEx, alphabet: set[str]) -> Optional[DFA]:
-    # TODO: Implement the Brzozowski algorithm to convert regex to DFA
-    # Steps:
-    # 1. Start with the initial regex as the start state
-    # 2. For each state and each symbol in the alphabet:
-    #    - Compute the derivative of the state's regex with respect to the symbol
-    #    - Simplify the resulting regex
-    #    - Add a transition from the current state to a state representing this new regex
-    # 3. States are accepting if their regex is nullable
-    # 4. Continue until no new states are discovered
-
     # Initialize data structures
     states = set()  # Set of state names (q0, q1, etc.)
     state_to_regex = {}  # Maps state names to their regex
@@ -246,9 +236,57 @@ def build_dfa(regex: RegEx, alphabet: set[str]) -> Optional[DFA]:
 
     # Initialize state counter for generating unique state names
     state_counter = 0
+        
+    def new_state():
+        nonlocal state_counter
+        state_name = f"q{state_counter}"
+        state_counter += 1
+        return state_name
 
     # YOUR CODE HERE
+    # TODO: Implement the Brzozowski algorithm to convert regex to DFA
+    # Steps:
+    # 1. Start with the initial regex as the start state
+    start_state = new_state()
+    states.add(start_state)
+
+    state_to_regex[start_state] = regex
+    regex_to_state[regex] = start_state
+
+    if regex.nullable():
+        accept_states.add(start_state)
+
+    # 2. For each state and each symbol in the alphabet:
+    #    - Compute the derivative of the state's regex with respect to the symbol
+    #    - Simplify the resulting regex
+    #    - Add a transition from the current state to a state representing this new regex
+    Q = deque([start_state])
+
+    while Q:
+        current_state = Q.popleft()
+        current_regex = state_to_regex[current_state]
+
+        for symbol in alphabet:
+            d = current_regex.derivative(symbol)
+            d = simplify(d)
+
+            if d in regex_to_state:
+                next_state = regex_to_state[d]
+            else:
+                next_state = new_state()
+                states.add(next_state)
+                state_to_regex[next_state] = d
+                regex_to_state[d] = next_state
+                Q.append(next_state)
+                
+                if d.nullable():
+                    accept_states.add(next_state)
+        
+            transitions[(current_state, symbol)] = next_state
+
+    # 3. States are accepting if their regex is nullable
+    # 4. Continue until no new states are discovered
 
     # Return the constructed DFA
     # You should return DFA(states, alphabet, transitions, start_state, accept_states)
-    return None
+    return DFA(states, alphabet, transitions, start_state, accept_states)

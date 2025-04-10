@@ -21,14 +21,15 @@ def rabin_karp_pattern_match(text: str, pattern: str, prime: int = 101) -> list[
     BASE = 256
 
     def hash(s: str):
+        n = len(s)
         h = 0
         for i, c in enumerate(s):
-            h += ord(c) * (BASE ** i)
+            h += ord(c) * (BASE ** (n - i - 1))
         return h % prime
     
     def rolling_hash(old_hash, oldc, newc, pattern_len):
-        h = old_hash - ord(oldc) * (BASE ** pattern_len) + ord(newc) * (BASE ** pattern_len)
-        return h % prime
+        new_hash = (BASE * (old_hash - ord(oldc) * BASE ** (pattern_len - 1)) + ord(newc)) % prime
+        return new_hash
 
     if text == "" or pattern == "": return []
 
@@ -48,8 +49,3 @@ def rabin_karp_pattern_match(text: str, pattern: str, prime: int = 101) -> list[
             result.append(i)
 
     return result
-
-text = "ABABDABACDABABCABAB"
-pattern = "ABABC"
-
-print(rabin_karp_pattern_match(text, pattern))

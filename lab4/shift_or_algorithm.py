@@ -77,8 +77,3 @@ def shift_or(text: str, pattern: str) -> list[int]:
             result.append(i - m + 1)
 
     return result
-
-print(nth_bit((~0 << 1), 3))
-print(nth_bit((~0 << 1), 2))
-print(nth_bit((~0 << 1), 3))
-print(nth_bit((~0 << 1), 0))

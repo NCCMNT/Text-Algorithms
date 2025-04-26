@@ -86,12 +86,20 @@ def fuzzy_shift_or(text: str, pattern: str, k: int = 2) -> list[int]:
     if len(pattern) == 0 or len(text) == 0 or len(text) < len(pattern) or k < 0: return []
     result = []
     masks = make_mask(pattern)
+    m = len(pattern)
     s = [~0 for _ in range(k+1)]
+
     for i, c in enumerate(text):
-        for j in range(k+1, 0, -1):
-            s[j] = ((s[j] << 1) | masks[ord(c)]) & (s[j-1] << 1)
-        s[0] = (s[0] << 1) | masks[ord(c)]
-        if nth_bit(s[k+1], len(pattern) - 1) == 0:
-            result.append(i - len(pattern) + 1)
+        char_mask = masks[ord(c)]
+        prev = s[0]
+        s[0] = ((s[0] << 1) | char_mask)
+
+        for j in range(1, k+1):
+            tmp = s[j]
+            s[j] = ((s[j] << 1) | char_mask) & (prev << 1)
+            prev = tmp
+
+        if nth_bit(s[k], m - 1) == 0:
+            result.append(i - m + 1)
 
     return result

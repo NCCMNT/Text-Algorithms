@@ -13,4 +13,5 @@ def levenshtein_distance(s1: str, s2: str) -> int:
     # TODO: Zaimplementuj obliczanie odległości Levenshteina
     # TODO: Obsłuż przypadki brzegowe (puste ciągi)
     # TODO: Zaimplementuj algorytm dynamicznego programowania do obliczenia odległości
-    pass
+    n, m = len(s1), len(s2)
+    if n == m == 0: return 0

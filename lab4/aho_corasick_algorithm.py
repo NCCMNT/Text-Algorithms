@@ -1,22 +1,34 @@
 from collections import deque
 from typing import List, Tuple, Optional
 
-
 class AhoCorasickNode:
-    def __init__(self):
+    def __init__(self, char):
         # TODO: Zainicjalizuj struktury potrzebne dla węzła w drzewie Aho-Corasick
-        pass
-
+        self.char = char
+        self.children = dict()
+        self.fail_link = None
+        self.outputs = []
 
 class AhoCorasick:
     def __init__(self, patterns: List[str]):
         # TODO: Zainicjalizuj strukturę Aho-Corasick i usuń puste wzorce
-        pass
+        self.root = AhoCorasickNode(None)
+        self.patterns = list(filter(lambda x: len(x) != 0, patterns))
 
     def _build_trie(self):
         """Builds the trie structure for the given patterns."""
         # TODO: Zaimplementuj budowanie drzewa typu trie dla podanych wzorców
-        pass
+        for pattern in self.patterns:
+
+            node = self.root
+            for c in pattern:
+
+                if c not in node.children:
+                    node.children[c] = AhoCorasickNode(c)
+
+                node = node.children[c]
+                
+            node.outputs.append(pattern)
 
     def _build_failure_links(self):
         """Builds failure links and propagates outputs through them."""
@@ -25,7 +37,25 @@ class AhoCorasick:
         # TODO: Zainicjalizuj łącza awaryjne dla węzłów na głębokości 1
         # TODO: Użyj BFS do ustawienia łączy awaryjnych dla głębszych węzłów
         # TODO: Propaguj wyjścia przez łącza awaryjne
-        pass
+
+        Q = deque([])
+
+        for node in self.root.children.values():
+            node.fail_link = self.root
+            Q.append(node)
+
+        while Q:
+            node = Q.popleft()
+
+            for c, child in node.children.items():
+                fnode = node.fail_link
+                
+                while fnode is not None and c not in fnode.children:
+                    fnode = fnode.fail_link
+
+                child.fail_link = fnode.children[c] if fnode else self.root
+                child.outputs += child.fail_link.outputs if child.fail_link else []
+                Q.append(child)
 
     def search(self, text: str) -> List[Tuple[int, str]]:
         """
@@ -36,4 +66,22 @@ class AhoCorasick:
         """
         # TODO: Zaimplementuj wyszukiwanie wzorców w tekście
         # TODO: Zwróć listę krotek (indeks_początkowy, wzorzec)
-        return []
+        if len(text) == 0: return []
+        results = []
+        self._build_trie()
+        self._build_failure_links()
+        node = self.root
+
+        for i, c in enumerate(text):
+            while node is not None and c not in node.children:
+                node = node.fail_link
+
+            if node is None:
+                node = self.root
+                continue
+            node = node.children[c]
+
+            for pattern in node.outputs:
+                results.append((i - len(pattern) + 1, pattern))
+
+        return results

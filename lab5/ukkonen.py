@@ -35,7 +35,11 @@ class SuffixTree:
         """
         Build the suffix tree using Ukkonen's algorithm.
         """
+        def get_edge_text_len(node : Node):
+            return node.end.value - node.start if isinstance(node.end, End) else node.end - node.start
+
         i = 0
+        id = 1
         n = len(self.text)
         END = End(None)
         while i < n:
@@ -44,6 +48,8 @@ class SuffixTree:
 
             if char not in self.active_node.children.keys():
                 current_node = Node(i,END)
+                current_node.id = id
+                id += 1
                 self.active_node.children[char] = current_node
             else:
                 self.active_edge = char
@@ -52,27 +58,53 @@ class SuffixTree:
 
                 node = self.active_node.children[self.active_edge]
                 j = 1
-
-                while self.text[node.start + j] == self.text[i + j]:
+                
+                next_char_in_text = self.text[i + j]
+                next_char_in_edge = self.text[node.start + j]
+                while next_char_in_edge == next_char_in_text:
                     END.value += 1
                     self.active_length += 1
                     self.remainder += 1
-                    j += 1
 
+                    j += 1
+                    next_char_in_text = self.text[i + j]
+                    next_char_in_edge = self.text[node.start + j]
+                    
+                    if j == get_edge_text_len(node):
+                        self.active_node = node
+                        self.active_length = 0
+                        if next_char_in_text not in self.active_node.children.keys():
+                            new_child = Node(i+j,END)
+                            new_child.id = id
+                            id += 1
+                            self.active_node.children[next_char_in_text] = new_child
+                            self.active_edge = None
+                        else:
+                            node = self.active_node.children[next_char_in_text]
+                            next_char_in_edge = self.text[node.start]
+                        
+
+                # splitting a node
                 last_split = None
                 while self.remainder >= 1:
                     node = self.active_node.children[self.active_edge]
 
                     parent_node = Node(node.start, node.start + self.active_length)
+                    parent_node.id = id 
+                    id += 1
                     self.active_node.children[self.text[parent_node.start]] = parent_node
 
                     if last_split is not None:
                         last_split.suffix_link = parent_node
 
                     node.start = parent_node.end
+                    new_node = Node(END.value, END)
+                    new_node.id = id
+                    id += 1
 
                     parent_node.children[self.text[node.start]] = node
-                    parent_node.children[self.text[i + j]] = Node(END.value, END)
+                    parent_node.children[self.text[i + j]] = new_node
+
                     self.active_length -= 1
                     self.remainder -= 1
                     self.active_edge = self.text[parent_node.start + 1]

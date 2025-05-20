@@ -70,9 +70,6 @@ class SuffixTree:
         
         def get_edge_text_len(node : Node):
             return node.end.value - node.start if isinstance(node.end, End) else node.end - node.start
-        
-        def extend_tree():
-            pass
 
         n = len(self.text)
         for i in range(n):
@@ -85,7 +82,6 @@ class SuffixTree:
 
                 if self.active_length == 0:
                     self.active_edge = i
-
                 edge_char = self.text[self.active_edge]
 
                 if edge_char not in self.active_node.children.keys():
@@ -94,6 +90,8 @@ class SuffixTree:
                     if last_split is not None:
                         last_split.suffix_link = self.active_node
                         last_split = None
+                    if self.active_node is not self.root:
+                        self.active_node = self.active_node.suffix_link or self.root
                 
                 else:
                     node = self.active_node.children[edge_char]
@@ -102,7 +100,7 @@ class SuffixTree:
                     if self.active_length == edge_len:
                         self.active_node = node
                         self.active_length = 0
-                        self.active_edge = i - self.remainder + 1
+                        self.active_edge = 0
                         continue
 
                     if self.text[node.start + self.active_length] == char:
@@ -110,12 +108,14 @@ class SuffixTree:
                         if last_split:
                             last_split.suffix_link = self.active_node
                         break
+
                     
                     last_split = split_node(node, last_split)
 
-                    if self.active_node is not self.root:
+
+                    if self.active_node is self.root:
                         self.active_length -= 1
-                        self.active_edge = i - self.remainder + 1
+                        self.active_edge += 1
                     else:
                         self.active_node = self.active_node.suffix_link or self.root
                     
@@ -132,19 +132,7 @@ class SuffixTree:
             A list of positions where the pattern occurs in the text
         """
         # Implement pattern search using the suffix tree
-        pass
-
-text = 'abcabxabcd'
-T = text + '$'
-st = SuffixTree(text)
-print(st)
-
-# t2 = 'ababadda'
-# T = t2 + '$'
-# st = SuffixTree(t2)
-# print(st)
-
-# text = 'skibidibi'
-# T = text + '$'
-# st = SuffixTree(text)
-# print(st)
+        node = self.root
+        i = 0
+        n = len(pattern)
+        while i < 

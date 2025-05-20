@@ -84,9 +84,11 @@ class SuffixTree:
                 add_child(self.active_node, char, i)
 
             else:
+                node = self.active_node.children[char]
                 self.active_edge = char
-                self.active_length += 1
+                self.active_length = 1
                 self.remainder += 1
+
 
                 
             

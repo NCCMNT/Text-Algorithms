@@ -122,7 +122,9 @@ def longest_palindromic_substring(text: str) -> str:
     # Create a new string concatenating the original text and its reverse
     # Use suffix structures to find the longest common substring between them
     # Handle the case where palindrome centers between characters
-    combined = text + "#" + text[::-1] + "$"
+    revtext = text[::-1]
+    combined = text + "#" + revtext + "$"
     st = SuffixTree(combined)
- 
+    n = len(text)
+
     pass

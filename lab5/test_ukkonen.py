@@ -49,7 +49,8 @@ very_long_text = [
     "xyz" * 170 + "end",
     "".join(["abcde"[i % 5] for i in range(600)]),  # cyclic
     "mississippimississippimis",
-    "mississippimississippimississippimississippimississippimississippi"
+    "mississippimississippimississippimississippimississippimississippi",
+    "Nory was a Catholic because her mother was a Catholic, and Nory’s mother was a Catholic because her father was a Catholic, and her father was a Catholic because his mother was a Catholic, or had been."
 ]
 
 
@@ -66,7 +67,7 @@ def test_ukkonen_by_number_of_leaves(list : list, testno : int) -> bool:
         suffix_tree = SuffixTree(text)
         assert check_leaves(suffix_tree), f"Failed for text '{text}'"
 
-    print(f"Test {testno} passsed")
+    print(f"PASSED leaf counting test")
     return True
 
 def test_ukkonen_finding_pattern():
@@ -77,7 +78,7 @@ def test_ukkonen_finding_pattern():
             result = suffix_tree.find_pattern(pattern)
             result.sort()
             assert result == expected, f"Failed for pattern '{pattern}': got {result}, expected {expected}"
-        print(f"PASSED pattern matching test for text {text}")
+        print(f"PASSED pattern matching test")
         return True
 
     assert test_batch("abracadabra", {
@@ -97,6 +98,9 @@ def test_ukkonen_finding_pattern():
     })
 
     assert test_batch("abracad" * 50, {"abra" : list(range(0,350,7))})
+    assert test_batch("Nory was a Catholic because her mother was a Catholic, and Nory’s" \
+    " mother was a Catholic because her father was a Catholic, and her father was a Catholic" \
+    " because his mother was a Catholic, or had been.", {"Catholic" : [11, 45, 79, 113, 144, 178]})
 
 def run_tests():
     leaves_tests_batch = [short_texts, medium_texts, long_texts, very_long_text]

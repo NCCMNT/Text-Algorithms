@@ -35,14 +35,14 @@ class SuffixTree:
         """
         Build the suffix tree using Ukkonen's algorithm.
         """
-        ID = 1
+        ID = 0
         END = End(0)
 
         def split_node(node : Node, last_split : Node = None) -> Node:
             nonlocal ID, END
             parent_node = Node(node.start, node.start + self.active_length)
-            parent_node.id = ID
-            ID += 1
+            # parent_node.id = ID
+            # ID += 1
 
             self.active_node.children[self.text[parent_node.start]] = parent_node
 
@@ -97,10 +97,10 @@ class SuffixTree:
                     node = self.active_node.children[edge_char]
                     edge_len = get_edge_text_len(node)
 
-                    if self.active_length == edge_len:
+                    if self.active_length >= edge_len:
                         self.active_node = node
-                        self.active_length = 0
-                        self.active_edge = 0
+                        self.active_length -= edge_len
+                        self.active_edge += edge_len
                         continue
 
                     if self.text[node.start + self.active_length] == char:
@@ -135,4 +135,39 @@ class SuffixTree:
         node = self.root
         i = 0
         n = len(pattern)
-        while i < 
+        while i < n:
+            if pattern[i] not in node.children.keys():
+                return []
+            
+            child = node.children[pattern[i]]
+            edge_end = child.end.value if isinstance(child.end, End) else child.end
+            edge_text = self.text[child.start : edge_end]
+
+            j = 0
+            m = len(edge_text)
+            while j < m and i < n:
+                if pattern[i] != edge_text[j]:
+                    return []
+                j += 1
+                i += 1
+            node = child
+        
+        results = []
+
+        def collect_DFS(node : Node):
+            if not node.children:
+                results.append(node.id)
+                return
+            
+            for child in node.children.values():
+                collect_DFS(child)
+        
+        collect_DFS(node)
+        
+        return results
+    
+t1 = "banana" * 50
+T = t1 + "$"
+st = SuffixTree(t1)
+l = st.find_pattern("banana")
+print(len(l))

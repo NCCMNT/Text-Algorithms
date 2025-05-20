@@ -12,7 +12,8 @@ short_texts = [
     "aaaaa",
     "xyzzy",
     "aabbaa",
-    "skibidi"
+    "skibidi",
+    "addadda"
 ]
 
 medium_texts = [
@@ -47,6 +48,7 @@ very_long_text = [
     "abababab" * 70,
     "xyz" * 170 + "end",
     "".join(["abcde"[i % 5] for i in range(600)]),  # cyclic
+    "mississippimississippimis",
     "mississippimississippimississippimississippimississippimississippi"
 ]
 
@@ -62,16 +64,46 @@ def test_ukkonen_by_number_of_leaves(list : list, testno : int) -> bool:
 
     for text in list:
         suffix_tree = SuffixTree(text)
-        if not check_leaves(suffix_tree):
-            print(f"Test {testno} failed on: {text}")
-            return False
+        assert check_leaves(suffix_tree), f"Failed for text '{text}'"
+
     print(f"Test {testno} passsed")
     return True
+
+def test_ukkonen_finding_pattern():
+
+    def test_batch(text : str, patterns : dict) -> bool:
+        suffix_tree = SuffixTree(text)
+        for pattern, expected in patterns.items():
+            result = suffix_tree.find_pattern(pattern)
+            result.sort()
+            assert result == expected, f"Failed for pattern '{pattern}': got {result}, expected {expected}"
+        print(f"PASSED pattern matching test for text {text}")
+        return True
+
+    assert test_batch("abracadabra", {
+        "abra": [0, 7],
+        "cad": [4],
+        "a": [0, 3, 5, 7, 10],
+        "ra": [2, 9],
+        "xyz": [],
+    })
+
+    assert test_batch("banana", {
+        "na": [2, 4],
+        "ana": [1, 3],
+        "nana": [2],
+        "banana": [0],
+        "bananas": [],
+    })
+
+    assert test_batch("abracad" * 50, {"abra" : list(range(0,350,7))})
 
 def run_tests():
     leaves_tests_batch = [short_texts, medium_texts, long_texts, very_long_text]
     for i, batch in enumerate(leaves_tests_batch):
         if not test_ukkonen_by_number_of_leaves(batch, i):
             return False
+    
+    test_ukkonen_finding_pattern()
 
 run_tests()

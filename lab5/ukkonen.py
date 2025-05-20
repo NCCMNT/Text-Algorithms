@@ -11,9 +11,9 @@ class Node:
         self.id = -1
     def __repr__(self):
         if isinstance(self.end, End):
-            return T[self.start : self.end.value]
+            return T[self.start : self.end.value] + f" ({self.id})"
         else:
-            return T[self.start : self.end]
+            return T[self.start : self.end] + f" ({self.id})"
  
 class SuffixTree:
     def __init__(self, text: str):
@@ -35,17 +35,15 @@ class SuffixTree:
         """
         Build the suffix tree using Ukkonen's algorithm.
         """
-        def get_edge_text_len(node : Node):
-            return node.end.value - node.start if isinstance(node.end, End) else node.end - node.start
-
-        ID = 1
+        ID = 0
         END = End(0)
 
         def split_node(node : Node, last_split : Node = None) -> Node:
             nonlocal ID, END
             parent_node = Node(node.start, node.start + self.active_length)
-            parent_node.id = ID
-            ID += 1
+            # parent_node.id = ID
+            # ID += 1
+
             self.active_node.children[self.text[parent_node.start]] = parent_node
 
             # Rule 2
@@ -60,8 +58,6 @@ class SuffixTree:
             parent_node.children[self.text[node.start]] = node
             parent_node.children[self.text[new_leaf.start]] = new_leaf
 
-            self.remainder -= 1
-            self.active_length -= 1       
             last_split = parent_node
             return last_split
         
@@ -71,30 +67,59 @@ class SuffixTree:
             child.id = ID
             ID += 1
             node.children[char] = child
+        
+        def get_edge_text_len(node : Node):
+            return node.end.value - node.start if isinstance(node.end, End) else node.end - node.start
 
-        i = 0
         n = len(self.text)
-        END = End(None)
-        while i < n:
+        for i in range(n):
             char = self.text[i]
+            self.remainder += 1
             END.value = i + 1
-            self.remainder = 1
+            last_split = None
 
-            if char not in self.active_node.children.keys():
-                add_child(self.active_node, char, i)
+            while self.remainder > 0:
 
-            else:
-                node = self.active_node.children[char]
-                self.active_edge = char
-                self.active_length = 1
-                self.remainder += 1
+                if self.active_length == 0:
+                    self.active_edge = i
+                edge_char = self.text[self.active_edge]
 
+                if edge_char not in self.active_node.children.keys():
+                    add_child(self.active_node, char, i)
 
+                    if last_split is not None:
+                        last_split.suffix_link = self.active_node
+                        last_split = None
+                    if self.active_node is not self.root:
+                        self.active_node = self.active_node.suffix_link or self.root
                 
-            
-            i += 1
+                else:
+                    node = self.active_node.children[edge_char]
+                    edge_len = get_edge_text_len(node)
+
+                    if self.active_length >= edge_len:
+                        self.active_node = node
+                        self.active_length -= edge_len
+                        self.active_edge += edge_len
+                        continue
+
+                    if self.text[node.start + self.active_length] == char:
+                        self.active_length += 1
+                        if last_split:
+                            last_split.suffix_link = self.active_node
+                        break
+
+                    
+                    last_split = split_node(node, last_split)
 
 
+                    if self.active_node is self.root:
+                        self.active_length -= 1
+                        self.active_edge += 1
+                    else:
+                        self.active_node = self.active_node.suffix_link or self.root
+                    
+                self.remainder -= 1
  
     def find_pattern(self, pattern: str) -> list[int]:
         """
@@ -107,9 +132,42 @@ class SuffixTree:
             A list of positions where the pattern occurs in the text
         """
         # Implement pattern search using the suffix tree
-        pass
+        node = self.root
+        i = 0
+        n = len(pattern)
+        while i < n:
+            if pattern[i] not in node.children.keys():
+                return []
+            
+            child = node.children[pattern[i]]
+            edge_end = child.end.value if isinstance(child.end, End) else child.end
+            edge_text = self.text[child.start : edge_end]
 
-text = 'abcabxabcd'
-T = text + '$'
-st = SuffixTree(text)
-print(st)
+            j = 0
+            m = len(edge_text)
+            while j < m and i < n:
+                if pattern[i] != edge_text[j]:
+                    return []
+                j += 1
+                i += 1
+            node = child
+        
+        results = []
+
+        def collect_DFS(node : Node):
+            if not node.children:
+                results.append(node.id)
+                return
+            
+            for child in node.children.values():
+                collect_DFS(child)
+        
+        collect_DFS(node)
+        
+        return results
+    
+t1 = "banana" * 50
+T = t1 + "$"
+st = SuffixTree(t1)
+l = st.find_pattern("banana")
+print(len(l))

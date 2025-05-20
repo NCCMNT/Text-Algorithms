@@ -1,4 +1,4 @@
-from ukkonen_cp2 import SuffixTree
+from lab5.ukkonen import SuffixTree
 import sys
 sys.setrecursionlimit(10000)
 

@@ -122,9 +122,7 @@ def longest_palindromic_substring(text: str) -> str:
     # Create a new string concatenating the original text and its reverse
     # Use suffix structures to find the longest common substring between them
     # Handle the case where palindrome centers between characters
+    combined = text + "#" + text[::-1] + "$"
+    st = SuffixTree(combined)
  
     pass
-
-strings = ["banana", "ananas", "nana"]
-l = longest_common_substring_multiple(strings)
-print(l)

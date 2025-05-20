@@ -58,8 +58,6 @@ class SuffixTree:
             parent_node.children[self.text[node.start]] = node
             parent_node.children[self.text[new_leaf.start]] = new_leaf
 
-            # self.active_length -= 1
-
             last_split = parent_node
             return last_split
         
@@ -72,91 +70,56 @@ class SuffixTree:
         
         def get_edge_text_len(node : Node):
             return node.end.value - node.start if isinstance(node.end, End) else node.end - node.start
+        
+        def extend_tree():
+            pass
 
-        i = 0
         n = len(self.text)
-        while i < n:
+        for i in range(n):
             char = self.text[i]
-            END.value = i + 1
             self.remainder += 1
+            END.value = i + 1
+            last_split = None
 
-            if char not in self.active_node.children.keys():
-                add_child(self.active_node, char, i)
+            while self.remainder > 0:
 
-                # last_split = None
-                # while self.remainder >= 1:
-                #     if self.active_node == self.root and self.active_length > 0:
-                #         self.active_length -= 1
-                #         self.active_edge = i - self.remainder + 1
+                if self.active_length == 0:
+                    self.active_edge = i
 
-                #     if last_split:
-                #         last_split.suffix_link = self.active_node
-                #         last_split = None
+                edge_char = self.text[self.active_edge]
 
-                #     self.remainder -= 1
-            
-            else:
-                self.active_length = 0
-                self.remainder = 0
-                self.active_edge = char
-                node = self.active_node.children[char]
+                if edge_char not in self.active_node.children.keys():
+                    add_child(self.active_node, char, i)
 
-                next_char_in_text = char
-                next_char_in_edge = self.text[node.start]
-                j = 1
-                index = 0
-                while next_char_in_edge == next_char_in_text:
-                    END.value += 1
-                    self.active_length += 1
-                    self.remainder += 1
-                    index += 1
-                    next_char_in_text = self.text[i + index]
+                    if last_split is not None:
+                        last_split.suffix_link = self.active_node
+                        last_split = None
+                
+                else:
+                    node = self.active_node.children[edge_char]
+                    edge_len = get_edge_text_len(node)
 
-                    if index == get_edge_text_len(node):
+                    if self.active_length == edge_len:
                         self.active_node = node
                         self.active_length = 0
-                        self.active_edge = 0
+                        self.active_edge = i - self.remainder + 1
+                        continue
 
-                        if next_char_in_text in self.active_node.children.keys():
-                            node = self.active_node.children[next_char_in_text]
-                            next_char_in_edge = self.text[node.start]
-                            self.active_edge = next_char_in_edge
-                            j = 1
-                            continue
-                        else:
-                            break
-
-                    next_char_in_edge = self.text[node.start + j]
-                    j += 1
-
-                last_split = None
-                while self.remainder >= 1:
+                    if self.text[node.start + self.active_length] == char:
+                        self.active_length += 1
+                        if last_split:
+                            last_split.suffix_link = self.active_node
+                        break
                     
-                    if self.active_edge != 0:
-                        if self.active_length >= 1:
-                            node = self.active_node.children[self.active_edge]
-                            last_split = split_node(node, last_split)
+                    last_split = split_node(node, last_split)
 
-                        if self.active_node is self.root:
-                            self.active_edge = self.text[last_split.start + 1]
-                            self.active_length = 0
-                                                    
-                    else:
-                        add_child(self.active_node, next_char_in_text, i+index)
-
-                    # Rule 3
                     if self.active_node is not self.root:
-                        # self.active_length += 1
-                        if self.active_node.suffix_link is not None:
-                            self.active_node = self.active_node.suffix_link
-                        else:
-                            self.active_node = self.root
+                        self.active_length -= 1
+                        self.active_edge = i - self.remainder + 1
+                    else:
+                        self.active_node = self.active_node.suffix_link or self.root
                     
-                    self.remainder -= 1
-                
-                i += index
-                continue
-            i += 1
+                self.remainder -= 1
  
     def find_pattern(self, pattern: str) -> list[int]:
         """

@@ -10,10 +10,11 @@ class Node:
         self.end = end
         self.id = -1
     def __repr__(self):
-        if isinstance(self.end, End):
-            return T[self.start : self.end.value] + f" ({self.id})"
-        else:
-            return T[self.start : self.end] + f" ({self.id})"
+        return f"{self.id}"
+        # if isinstance(self.end, End):
+        #     return T[self.start : self.end.value] + f" ({self.id})"
+        # else:
+        #     return T[self.start : self.end] + f" ({self.id})"
  
 class SuffixTree:
     def __init__(self, text: str):
@@ -165,9 +166,3 @@ class SuffixTree:
         collect_DFS(node)
         
         return results
-    
-t1 = "banana" * 50
-T = t1 + "$"
-st = SuffixTree(t1)
-l = st.find_pattern("banana")
-print(len(l))

@@ -1,31 +1,6 @@
 from ukkonen import SuffixTree, Node
+from suffix_array import SuffixArray, Suffix
 import time, psutil, os, sys
-
-class Suffix:
-    def __init__(self, string, index):
-        self.string = string
-        self.index = index  
-
-class SuffixArray:
-    def __init__(self, text):
-        self.suffixes = [0] * len(text)
-        self.text = text
-        self.build_array()
-
-    def sorted_suffixes(self, text: str) -> list[Suffix]:
-        suffixes = []
-        n = len(text)
-        for i in range(n):
-            suffixes.append(Suffix(text[i:], i))
-        
-        suffixes.sort(key = lambda suff: suff.string)
-        return suffixes
-
-    def build_array(self):
-        sorted_suff = self.sorted_suffixes(self.text)
-
-        for i, suff in enumerate(sorted_suff):
-            self.suffixes[i] = suff.index
 
 def get_memory_usage():
     process = psutil.Process(os.getpid())

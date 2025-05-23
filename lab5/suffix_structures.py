@@ -43,6 +43,10 @@ def get_suffix_tree_size(st: SuffixTree):
     
     return dfs(st.root)
 
+def get_suffix_array_size(sa: SuffixArray):
+    size_of_suffix = sys.getsizeof(Suffix("", None))
+    return len(sa.suffixes) * size_of_suffix
+
 def compare_suffix_structures(text: str) -> dict:
     """
     Compare suffix array and suffix tree data structures.
@@ -73,8 +77,8 @@ def compare_suffix_structures(text: str) -> dict:
     mem_after_st = get_memory_usage()
     stree_mem_usage = mem_after_st - mem_after_sa
     
-    # Measure size of structures
-    sarray_size = len(sa.suffixes)
+    # Measure size of structures in bytes
+    sarray_size = get_suffix_array_size(sa)
     stree_size = get_suffix_tree_size(st)
 
     return {
@@ -89,3 +93,7 @@ def compare_suffix_structures(text: str) -> dict:
             "size": stree_size
         }
     }
+
+
+t = "wtwethoewitewjtiwqhtwqpithoiwqhoitw" * 53
+print(compare_suffix_structures(t))

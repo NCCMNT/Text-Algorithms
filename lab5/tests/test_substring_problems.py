@@ -52,3 +52,22 @@ class TestSubstringProblems:
         for strings, expected in test_cases.items():
             result = longest_common_substring_multiple(strings)
             assert result == expected
+
+    def test_palindrome(self):
+        test_cases = {
+            "cbbd": "bb",
+            "a": "a",
+            "racecar": "racecar",
+            "abacdfgdcaba": "aba",
+            "": "",
+            "abcddcbazzz": "abcddcba",
+            "banana": "anana",
+            "level": "level",
+            "aaabaaaa": "aaabaaa",
+            "xyzzyx": "xyzzyx",
+            "bajojab cd ad d" : "bajojab",
+        }
+
+        for text, expected in test_cases.items():
+            result = longest_palindromic_substring(text)
+            assert result == expected

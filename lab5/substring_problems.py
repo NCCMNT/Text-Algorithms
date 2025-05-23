@@ -126,5 +126,41 @@ def longest_palindromic_substring(text: str) -> str:
     combined = text + "#" + revtext + "$"
     st = SuffixTree(combined)
     n = len(text)
+    lps = ""
 
-    pass
+    def DFS(node : Node, path : list):
+        nonlocal lps
+        bits = set()
+        # positions = []
+        positions = set()
+
+        if not node.children:
+            if node.id < n:
+                bits.add(0)
+                positions.add(node.id)
+            elif node.id > n:
+                bits.add(1)
+                positions.add(node.id - (n+1))
+            return bits, positions
+        
+        for child in node.children.values():
+            edge_end = child.end.value if hasattr(child.end, 'value') else child.end
+            edge_text = st.text[child.start : edge_end]
+
+            child_bits, child_positions = DFS(child, path + [edge_text])
+            bits.update(child_bits)
+            positions.update(child_positions)
+
+        if 0 in bits and 1 in bits:
+            substring = "".join(path)
+            l = len(substring)
+
+            for pos in positions:
+                revindex = n - (pos + l)
+                if revindex in positions and l > len(lps):
+                    lps = substring
+
+        return bits, positions
+    
+    DFS(st.root, [])
+    return lps

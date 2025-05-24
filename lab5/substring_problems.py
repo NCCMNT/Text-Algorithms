@@ -1,7 +1,58 @@
 from ukkonen import SuffixTree, Node
+from suffix_array import SuffixArray
 import random, string
 
-def longest_common_substring(str1: str, str2: str) -> str:
+def longest_common_substring_sa(str1: str, str2: str) -> str:
+    """
+    Find the longest common substring of two strings using a suffix array.
+ 
+    Args:
+        str1: First string
+        str2: Second string
+ 
+    Returns:
+        The longest common substring
+    """
+    # Concatenate the strings with a unique separator
+    combined = str1 + "#" + str2 + "$"
+    seperator_index = len(str1)
+ 
+    sa = SuffixArray(combined)
+
+    n = len(sa.suffixes)
+    lcp = [0] * (n-1)
+    rank = [0] * n
+    for i in range(n):
+        rank[sa.suffixes[i]] = i
+
+    k = 0
+    for i in range(n):
+        if rank[i] == n - 1:
+            k = 0
+            continue
+
+        j = sa.suffixes[rank[i] + 1]
+        while i + k < n and j + k < n and sa.text[i + k] == sa.text[j + k]:
+            k += 1
+
+        lcp[rank[i]] = k
+        if k > 0:
+            k -= 1
+    
+    max_len = 0
+    position = 0
+    for i in range(1, n):
+        s1 = sa.suffixes[i]
+        s2 = sa.suffixes[i - 1]
+
+        if (s1 < seperator_index) != (s2 < seperator_index):
+            if lcp[i - 1] > max_len:
+                max_len = lcp[i - 1]
+                position = s1
+
+    return combined[position : position + max_len]
+
+def longest_common_substring_st(str1: str, str2: str) -> str:
     """
     Find the longest common substring of two strings using a suffix tree.
  

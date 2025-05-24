@@ -151,7 +151,7 @@ class SuffixTree:
             while j < m and i < n:
                 if pattern[i] != edge_text[j]:
                     return []
-                compares += 1
+                compares += m
                 j += 1
                 i += 1
             node = child

@@ -140,7 +140,8 @@ class SuffixTree:
         compares = 0
         while i < n:
             if pattern[i] not in node.children.keys():
-                return []
+                return ([], compares) if self.count_compares else []
+            
             compares += 1
             child = node.children[pattern[i]]
             edge_end = child.end.value if isinstance(child.end, End) else child.end
@@ -150,8 +151,8 @@ class SuffixTree:
             m = len(edge_text)
             while j < m and i < n:
                 if pattern[i] != edge_text[j]:
-                    return []
-                compares += m
+                    return ([], compares) if self.count_compares else []
+                compares += 1
                 j += 1
                 i += 1
             node = child

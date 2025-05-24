@@ -68,7 +68,3 @@ def compare_suffix_structures(text: str) -> dict:
             "size": stree_size
         }
     }
-
-
-t = "wtwethoewitewjtiwqhtwqpithoiwqhoitw" * 53
-print(compare_suffix_structures(t))

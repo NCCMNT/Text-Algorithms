@@ -31,6 +31,7 @@ class SuffixTree:
         self.active_length = 0
         self.remainder = 0
         self.build_tree()
+        self.count_compares = False
  
     def build_tree(self):
         """
@@ -122,7 +123,7 @@ class SuffixTree:
                     
                 self.remainder -= 1
  
-    def find_pattern(self, pattern: str) -> list[int]:
+    def find_pattern(self, pattern: str):
         """
         Find all occurrences of the pattern in the text.
  
@@ -136,10 +137,11 @@ class SuffixTree:
         node = self.root
         i = 0
         n = len(pattern)
+        compares = 0
         while i < n:
             if pattern[i] not in node.children.keys():
                 return []
-            
+            compares += 1
             child = node.children[pattern[i]]
             edge_end = child.end.value if isinstance(child.end, End) else child.end
             edge_text = self.text[child.start : edge_end]
@@ -149,6 +151,7 @@ class SuffixTree:
             while j < m and i < n:
                 if pattern[i] != edge_text[j]:
                     return []
+                compares += 1
                 j += 1
                 i += 1
             node = child
@@ -164,5 +167,5 @@ class SuffixTree:
                 collect_DFS(child)
         
         collect_DFS(node)
-        
+        if self.count_compares: return results, compares
         return results

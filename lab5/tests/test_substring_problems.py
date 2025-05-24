@@ -1,8 +1,34 @@
 import pytest
 
-from substring_problems import longest_common_substring_sa, longest_common_substring_st, longest_palindromic_substring, longest_common_substring_multiple
+from substring_problems import longest_common_substring_sa, longest_common_substring_st, longest_common_substring_dp, longest_palindromic_substring, longest_common_substring_multiple
 
 class TestSubstringProblems:
+    def test_lcs_dp(self):
+        test_cases = [
+            ("abcdef", "abc", "abc"),
+            ("xyz", "abc", ""),
+            ("banana", "banana", "banana"),
+            ("hello", "lo", "lo"),
+            ("startmatch", "start", "start"),
+            ("abracadabra", "racad", "racad"),
+            ("bajojajo bajojajo", "ja ci dam pajacu bajojajo", " bajojajo"),
+            ("abababababab", "bababababa", "bababababa"),
+            ("Zażółć gęślą jaźń", "gęślą", "gęślą"),
+            ("abcdef", "", ""),
+            ("", "", ""),
+            ("x", "x", "x"),
+            ("abcxyz123", "xyx789abc", "abc"),
+            ("aaaaabbbbcccc", "xxxbbbbyyyy", "bbbb"),
+            ("testlongest", "longest", "longest"),
+            ("prefixmatch", "matchpostfix", "match"),
+            ("hello, world!", "world!", "world!"),
+            ("hello😀world", "😀wo", "😀wo"),
+        ]
+
+        for s1, s2, expected in test_cases:
+            result = longest_common_substring_dp(s1,s2)
+            assert result == expected
+
     def test_lcs_sa(self):
         test_cases = [
             ("abcdef", "abc", "abc"),

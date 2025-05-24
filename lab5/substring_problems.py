@@ -2,6 +2,37 @@ from ukkonen import SuffixTree, Node
 from suffix_array import SuffixArray
 import random, string
 
+def longest_common_substring_dp(str1: str, str2: str) -> str:
+    """
+    Find the longest common substring of two strings using dynamic programming.
+ 
+    Args:
+        str1: First string
+        str2: Second string
+ 
+    Returns:
+        The longest common substring
+    """
+    n = len(str1)
+    m = len(str2)
+
+    max_len, end_pos = 0, 0
+
+    DP = [[0 for _ in range(n + 1)] for _ in range(m + 1)]
+
+    for i in range(1, m + 1):
+        for j in range(1, n + 1):
+            if str1[j - 1] == str2[i - 1]:
+                DP[i][j] = DP[i - 1][j - 1] + 1
+
+                if DP[i][j] > max_len:
+                    max_len = DP[i][j]
+                    end_pos = j
+            else:
+                DP[i][j] = 0
+
+    return str1[end_pos - max_len: end_pos]
+
 def longest_common_substring_sa(str1: str, str2: str) -> str:
     """
     Find the longest common substring of two strings using a suffix array.

@@ -20,7 +20,6 @@ def compute_bad_character_table(pattern: str) -> dict:
     return table
 
 def compute_good_suffix_table(pattern: str) -> list[int]:
-    global compares
     """
     Compute the good suffix table for the Boyer-Moore algorithm.
 
@@ -46,7 +45,6 @@ def compute_good_suffix_table(pattern: str) -> list[int]:
 
     while i > 0:
         while j <= m and pattern[i - 1] != pattern[j - 1]:
-            compares += 1
             if shift[j] == 0:
                 shift[j] = j - i
             j = border_pos[j]
@@ -65,8 +63,6 @@ def compute_good_suffix_table(pattern: str) -> list[int]:
 
 
 def boyer_moore_pattern_match(text: str, pattern: str) -> tuple[list[int], int]:
-    global compares
-    compares = 0
     """
     Implementation of the Boyer-Moore pattern matching algorithm.
 
@@ -88,18 +84,20 @@ def boyer_moore_pattern_match(text: str, pattern: str) -> tuple[list[int], int]:
     result = []
     i = 0
     n, m = len(text), len(pattern)
+    compares = 0
     while i + m <= n:
         j = m - 1
         while j >= 0 and pattern[j] == text[i+j]:
             compares += 1
             j -= 1
+        compares += 1
         
         if j < 0:
             result.append(i)
             i += GST[0]
         else:
             BC_shift = j - BCT.get(text[i+j], -1)
-            GS_shift = GST[j]
+            GS_shift = GST[j + 1]
             i += max(BC_shift, GS_shift, 1)
 
     return result, compares

@@ -44,7 +44,7 @@ class TestUkkonen:
             "zzzyyyxxxwwwvvvuuutttsssrrrqqqpppooonnnmmmlllkkkjjjiii",
             "skibiditoilet" * 20,
             "helloworld" * 30,
-            "abcdefghijklmnopqrstuvwxyz" * 4
+            "abcdefghijklmnopqrstuvwxyz" * 4,
         ]
 
         very_long_text = [
@@ -97,6 +97,7 @@ class TestUkkonen:
             "bananas": [],
         })
 
+        assert test_batch("LLLorem im daolor sit amet, consectetur adipLorema elit, sed do eiusmod Loremc incididunt ut labore ", {"Lorem" : [2, 44, 72]})
         assert test_batch("abracad" * 50, {"abra" : list(range(0,350,7))})
         assert test_batch("Nory was a Catholic because her mother was a Catholic, and Nory’s" \
         " mother was a Catholic because her father was a Catholic, and her father was a Catholic" \

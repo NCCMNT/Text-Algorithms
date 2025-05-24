@@ -95,7 +95,7 @@ def boyer_moore_pattern_match(text: str, pattern: str) -> list[int]:
             i += GST[0]
         else:
             BC_shift = j - BCT.get(text[i+j], -1)
-            GS_shift = GST[j]
+            GS_shift = GST[j + 1]
             i += max(BC_shift, GS_shift, 1)
 
     return result 

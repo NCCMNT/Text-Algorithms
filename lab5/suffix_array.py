@@ -29,43 +29,68 @@ class SuffixArray:
             self.suffixes[i] = suff.index
 
     def find_pattern(self, pattern: str):
-
-        def compare_strings(str1, str2):
-            compares = 0
-            min_len = min(len(str1), len(str2))
-
-            for i in range(min_len):
-                compares += 1
-                if str1[i] < str2[i]: return -1, compares
-                elif str1[i] > str2[i]: return 1, compares
-
-            if len(str1) < len(str2): return -1, compares + 1
-            elif len(str1) > len(str2): return 1, compares + 1
-            return 0, compares
-
-        def bsearch(T, val, side):
-            nonlocal key_fun
-            l, r = 0, len(T) - 1
-            compares = 0
-            while l <= r:
-                mid = (l + r) // 2
-                comp_result, add_to_comp = compare_strings(val, key_fun(T[mid]))
-                compares += add_to_comp
-                if comp_result == 0:
-                    if side == 0: r = mid - 1
-                    elif side == 1: l = mid + 1
-                elif comp_result == -1:
-                    r = mid - 1
-                else:
-                    l = mid + 1
-            return l, compares
-        
-        if len(pattern) == 0:
-            return [], 0
-
+        low = 0
+        high = len(self.text) - 1
+        result = []
+        n = len(self.text)
         m = len(pattern)
-        key_fun = lambda x: self.suffix(x)[:m]
-        index_l, comp1 = bsearch(self.suffixes, pattern, 0)
-        index_r, comp2 = bsearch(self.suffixes, pattern, 1)
+        compares = 0
 
-        return self.suffixes[index_l:index_r], comp1 + comp2 if self.count_compares else self.suffixes[index_l:index_r]
+        while low <= high:
+            mid = (low + high) // 2
+            suffix_index = self.suffixes[mid]
+            i = 0
+
+            while i < m and suffix_index + i < n:
+                compares += 1
+                if pattern[i] != self.text[suffix_index + i]:
+                    break
+                i += 1
+
+            if i == m:
+                result.append(suffix_index)
+
+                # Left neighbors
+                l = mid - 1
+                while l >= 0:
+                    idx = self.suffixes[l]
+                    j = 0
+                    while j < m and idx + j < n:
+                        compares += 1
+                        if pattern[j] != self.text[idx + j]:
+                            break
+                        j += 1
+                    if j == m:
+                        result.append(idx)
+                        l -= 1
+                    else:
+                        break
+
+                # Right neighbors
+                r = mid + 1
+                while r < n:
+                    idx = self.suffixes[r]
+                    j = 0
+                    while j < m and idx + j < n:
+                        compares += 1
+                        if pattern[j] != self.text[idx + j]:
+                            break
+                        j += 1
+                    if j == m:
+                        result.append(idx)
+                        r += 1
+                    else:
+                        break
+
+                if self.count_compares: return result, compares  
+                return result
+
+            elif suffix_index + i == len(self.text):
+                low = mid + 1
+            elif pattern[i] < self.text[suffix_index + i]:
+                high = mid - 1
+            else:
+                low = mid + 1
+
+        if self.count_compares: return [], 0 
+        return []

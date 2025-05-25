@@ -38,13 +38,16 @@ def compute_good_suffix_table(pattern: str) -> list[int]:
     m = len(pattern)
     shift = [0] * (m + 1)
     border_pos = [0] * (m + 1)
+    compares = 0
 
     i = m
     j = m + 1
     border_pos[i] = j
 
     while i > 0:
+        compares += 1
         while j <= m and pattern[i - 1] != pattern[j - 1]:
+            compares += 1
             if shift[j] == 0:
                 shift[j] = j - i
             j = border_pos[j]
@@ -59,7 +62,7 @@ def compute_good_suffix_table(pattern: str) -> list[int]:
         if i == j:
             j = border_pos[j]
 
-    return shift 
+    return shift, compares 
 
 
 def boyer_moore_pattern_match(text: str, pattern: str) -> tuple[list[int], int]:
@@ -80,11 +83,10 @@ def boyer_moore_pattern_match(text: str, pattern: str) -> tuple[list[int], int]:
     # 4. Return all positions where the pattern is found in the text
     if not text or not pattern: return [], 0
     
-    BCT, GST = compute_bad_character_table(pattern), compute_good_suffix_table(pattern)
+    BCT, (GST, compares) = compute_bad_character_table(pattern), compute_good_suffix_table(pattern)
     result = []
     i = 0
     n, m = len(text), len(pattern)
-    compares = 0
     while i + m <= n:
         j = m - 1
         while j >= 0 and pattern[j] == text[i+j]:

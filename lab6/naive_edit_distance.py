@@ -57,7 +57,3 @@ def naive_edit_distance_with_operations(s1: str, s2: str) -> tuple[int, list[str
         return (1 + substitute, [f"REPLACE {s1[0]}->{s2[0]}"] + sub_op)
     else:
         return (1 + delete, [f"DELETE {s1[1]}"] + del_op)
-    
-s1 = "cat"
-s2 = "bat"
-distance, operations = naive_edit_distance_with_operations(s1, s2)

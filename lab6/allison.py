@@ -28,12 +28,6 @@ def allison_global_alignment(s1: str, s2: str,
         return gap_penalty * n, s1, '-' * n
     DP = [[0 for _ in range(m+1)] for _ in range(n+1)]
 
-    # for i in range(1,m+1):
-    #     DP[0][i] = i
-
-    # for i in range(1,n+1):
-    #     DP[i][0] = i
-
     for i in range(1,n+1):
         for j in range(1,m+1):
             ins = DP[i][j-1] + gap_penalty
@@ -147,7 +141,3 @@ def allison_local_alignment(s1: str, s2: str,
         i, j = prev_i, prev_j
 
     return max_score, result_s1, result_s2, i, j
-
-s1 = "GGGACGTGGG"
-s2 = "ACGT"
-score, align1, align2, start1, start2 = allison_local_alignment(s1, s2)
